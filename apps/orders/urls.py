@@ -1,7 +1,9 @@
 from django.urls import path
 
-from apps.orders.views import OrdersListView
+from apps.orders.views import OrdersListView, EditOrderView, AddGroupView
 
 urlpatterns = [
-    path('', OrdersListView.as_view())
+    path('', OrdersListView.as_view()),
+    path('/edit_order/<int:id>/', EditOrderView.as_view()),
+    path('/add_group', AddGroupView.as_view())
 ]

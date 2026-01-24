@@ -1,15 +1,8 @@
 from rest_framework.permissions import BasePermission
 
 
-class IsAdmin(BasePermission):
-    message = "Only admin can block/unblock users."
+class IsAdminOrManager(BasePermission):
+    message = "Only admin or manager can edit order or message order."
 
-    def has_permission(self, request):
-        return bool(request.user and request.user.is_authenticated and request.user.is_staff and request.user.is_superuser)
-
-
-class IsManager(BasePermission):
-    message = "Only admin can block/unblock users."
-
-    def has_permission(self, request):
-        return bool(request.user and request.user.is_authenticated and request.user.is_staff)
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser))

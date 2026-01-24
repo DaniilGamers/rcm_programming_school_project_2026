@@ -1,30 +1,39 @@
+from enum import unique
+
 from django.db import models
 
+from apps.orders.managers import OrderManager
 from core.models import BaseModel
 
 
-# Create your models here.
+class GroupModel(BaseModel):
+    class Meta:
+        db_table = 'group'
+        ordering = ('id',)
+
+    name = models.CharField(max_length=20, unique=True)
 
 
 class OrdersModel(BaseModel):
     class Meta:
         db_table = 'orders'
-        ordering = ('id',)
+        ordering = ('-id',)
 
-    name = models.CharField(max_length=25)
-    surname = models.CharField(max_length=25)
-    email = models.CharField(max_length=100)
-    phone = models.CharField(max_length=12)
+    name = models.CharField(max_length=25, blank=True, null=True)
+    surname = models.CharField(max_length=25, blank=True, null=True)
+    email = models.CharField(max_length=100, blank=True, null=True)
+    phone = models.CharField(max_length=12, blank=True, null=True)
     age = models.IntegerField(blank=True)
-    course = models.CharField(max_length=10)
-    course_format = models.CharField(max_length=15)
-    course_type = models.CharField(max_length=100)
-    sum = models.IntegerField(blank=True)
-    alreadyPaid = models.IntegerField(blank=True)
-    created_at = models.DateTimeField(blank=True)
-    utm = models.CharField(max_length=100)
-    msg = models.CharField(max_length=100)
-    status = models.CharField(max_length=15)
-    manager = models.CharField(max_length=20)
+    course = models.CharField(max_length=10, blank=True, null=True)
+    course_format = models.CharField(max_length=15, blank=True, null=True)
+    course_type = models.CharField(max_length=100, blank=True, null=True)
+    sum = models.IntegerField(blank=True, null=True)
+    alreadyPaid = models.IntegerField(blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    group = models.ForeignKey(GroupModel, on_delete=models.SET_NULL, null=True, blank=True)
+    utm = models.CharField(max_length=100, blank=True, null=True)
+    msg = models.CharField(max_length=100, blank=True, null=True)
+    status = models.CharField(max_length=15, blank=True, null=True)
+    manager = models.CharField(max_length=20, blank=True, null=True)
 
-
+    objects = OrderManager()

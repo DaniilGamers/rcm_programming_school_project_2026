@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from configs.extra_conf.jwt_conf import SIMPLE_JWT
 
 from .extra_conf import *
 
@@ -57,9 +58,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
-
-MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'corsheaders.middleware.CorsMiddleware'
@@ -159,7 +157,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     "PAGE_SIZE": 25,
     'DEFAULT_PERMISSION_CLASSES': [
-        'core.permissions.is_admin_or_manager.IsAdmin',
+        'core.permissions.is_admin_or_manager.IsAdminOrManager',
     ]
 }
 
