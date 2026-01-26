@@ -1,9 +1,17 @@
-from enum import unique
-
 from django.db import models
 
 from apps.orders.managers import OrderManager
 from core.models import BaseModel
+
+
+class MassageModel(BaseModel):
+
+    class Meta:
+        db_table = 'messages'
+        ordering = ('-id',)
+
+    text = models.CharField(max_length=100)
+    sender_name = models.CharField(max_length=100, blank=True, null=True)
 
 
 class GroupModel(BaseModel):

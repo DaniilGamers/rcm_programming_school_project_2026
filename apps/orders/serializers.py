@@ -6,6 +6,7 @@ from apps.orders.models import OrdersModel, GroupModel
 
 
 class OrdersSerializer(serializers.ModelSerializer):
+    created_date = serializers.SerializerMethodField()
     group_id = serializers.PrimaryKeyRelatedField(
         queryset=GroupModel.objects.all(),
         source="group",
@@ -18,8 +19,13 @@ class OrdersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrdersModel
-        fields = ('id', 'name', 'surname',  'email', 'phone', 'age', 'course', 'course_format', 'course_format', 'course_type', 'sum', 'alreadyPaid', 'group', 'created_at', 'utm', 'msg', 'status', 'manager', 'group_id')
+        fields = ('id', 'name', 'surname',  'email', 'phone', 'age', 'course', 'course_format', 'course_format', 'course_type', 'sum', 'alreadyPaid', 'group', 'created_at', 'created_date', 'utm', 'msg', 'status', 'manager', 'group_id')
         read_only_fields = ('id', 'created_at')
+
+    def get_created_date(self, obj):
+        if obj.created_at:
+            return obj.created_at.strftime("%B %d, %Y")
+        return None
 
     def validate(self, attrs):
         for field_name, value in attrs.items():

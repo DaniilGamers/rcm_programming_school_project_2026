@@ -10,6 +10,8 @@ from apps.orders.filter import OrderFilter
 
 from apps.orders.models import OrdersModel, GroupModel
 
+from core.services.export_excel_file import generate_orders_excel
+
 from rest_framework.generics import (GenericAPIView, ListAPIView, ListCreateAPIView, RetrieveUpdateAPIView)
 
 order = OrdersModel()
@@ -33,3 +35,12 @@ class AddGroupView(ListCreateAPIView):
     permission_classes = (IsAdminOrManager,)
     queryset = GroupModel.objects.all()
     serializer_class = GroupSerializer
+
+
+class ExportOrdersView(ListAPIView):
+    permission_classes = (IsAdminOrManager,)
+    queryset = OrdersModel.objects.all()
+    serializer_class = OrdersSerializer
+
+    def get(self, request):
+        return generate_orders_excel()
