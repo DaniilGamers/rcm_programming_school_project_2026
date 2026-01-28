@@ -18,6 +18,4 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
     is_staff = models.BooleanField(default=True)
     is_active = models.BooleanField(default=False)
     USERNAME_FIELD = 'email'
-    activation_token = models.CharField(max_length=64, blank=True, null=True)
-    activation_token_expires_at = models.DateTimeField(null=True,blank=True)
     objects = UserManager()

@@ -24,7 +24,14 @@ from rest_framework.response import Response
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from rest_framework.pagination import PageNumberPagination
+
 UserModel = get_user_model()
+
+
+class CustomPagination(PageNumberPagination):
+    page_size = 25
+    page_query_param = "page"
 
 
 class StaffListCreateView(CreateAPIView):
@@ -35,6 +42,7 @@ class StaffListCreateView(CreateAPIView):
 
 class StaffListCheckView(ListAPIView):
     permission_classes = (IsSuperAdmin,)
+    pagination_class = CustomPagination
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
 
