@@ -1,17 +1,8 @@
 from django.db import models
+from django.db.models import ForeignKey
 
 from apps.orders.managers import OrderManager
 from core.models import BaseModel
-
-
-class MassageModel(BaseModel):
-
-    class Meta:
-        db_table = 'messages'
-        ordering = ('-id',)
-
-    text = models.CharField(max_length=100)
-    sender_name = models.CharField(max_length=100, blank=True, null=True)
 
 
 class GroupModel(BaseModel):
@@ -45,3 +36,15 @@ class OrdersModel(BaseModel):
     manager = models.CharField(max_length=20, blank=True, null=True)
 
     objects = OrderManager()
+
+
+class MassageModel(BaseModel):
+
+    class Meta:
+        db_table = 'comments'
+        ordering = ('-id',)
+
+    text = models.CharField(max_length=100)
+    sender_name = models.CharField(max_length=100, blank=True, null=True)
+
+    order = ForeignKey(OrdersModel, on_delete=models.CASCADE, related_name="orders", blank=True)

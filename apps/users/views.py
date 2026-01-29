@@ -30,8 +30,10 @@ UserModel = get_user_model()
 
 
 class CustomPagination(PageNumberPagination):
-    page_size = 25
-    page_query_param = "page"
+    queryset = UserModel.objects.all()
+    serializer_class = UserSerializer
+
+    page_size = len(queryset)
 
 
 class StaffListCreateView(CreateAPIView):
@@ -43,8 +45,15 @@ class StaffListCreateView(CreateAPIView):
 class StaffListCheckView(ListAPIView):
     permission_classes = (IsSuperAdmin,)
     pagination_class = CustomPagination
-    queryset = UserModel.objects.all()
     serializer_class = UserSerializer
+
+    def get_queryset(self):
+        qs = UserModel.objects.all()
+
+        if self.request.user.is_superuser:
+            qs = qs.filter(is_staff=True, is_superuser=False)
+
+        return qs
 
 
 class BlockStaffView(GenericAPIView):
