@@ -95,8 +95,8 @@ WSGI_APPLICATION = 'configs.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'danielprojecttest123',
-        'USER': 'danielprojecttest123',
+        'NAME': 'danieltestproject123',
+        'USER': 'danieltestproject123',
         'PASSWORD': 'test1234',
         'HOST': 'owu.linkpc.net',
         'PORT': '3306'

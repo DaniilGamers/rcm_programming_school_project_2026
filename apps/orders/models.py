@@ -38,7 +38,7 @@ class OrdersModel(BaseModel):
     objects = OrderManager()
 
 
-class MassageModel(BaseModel):
+class CommentModel(BaseModel):
 
     class Meta:
         db_table = 'comments'
@@ -47,4 +47,4 @@ class MassageModel(BaseModel):
     text = models.CharField(max_length=100)
     sender_name = models.CharField(max_length=100, blank=True, null=True)
 
-    order = ForeignKey(OrdersModel, on_delete=models.CASCADE, related_name="orders", blank=True)
+    order = ForeignKey(OrdersModel, on_delete=models.CASCADE, related_name="messages")

@@ -12,29 +12,29 @@ class OrderFilter(filters.FilterSet):
     course_format = filters.BaseInFilter('course_format')
     course_type = filters.BaseInFilter('course_type')
     status = filters.BaseInFilter('status')
-    group = filters.BaseInFilter('group')
+    group = filters.CharFilter(field_name='group__name', lookup_expr='iexact')
     date_startswith = filters.DateFilter('created_at', 'gte')
     date_endswith = filters.DateFilter('created_at', 'lte')
     manager = filters.BaseInFilter('manager')
 
     order = filters.OrderingFilter(
         fields=(
-            'id',
-            'name',
-            'email',
-            'phone',
-            'age',
-            'course',
-            'course_format',
-            'course_type',
-            'sum',
-            'alreadyPaid',
-            'created_at',
-            'utm',
-            'msg',
-            'group',
-            'status',
-            'manager'
+            ('id', 'id'),
+            ('name', 'name'),
+            ('email', 'email'),
+            ('phone', 'phone'),
+            ('age', 'age'),
+            ('course', 'course'),
+            ('course_format', 'course_format'),
+            ('course_type', 'course_type'),
+            ('sum', 'sum'),
+            ('alreadyPaid', 'alreadyPaid'),
+            ('created_at', 'created_at'),
+            ('utm', 'utm'),
+            ('msg', 'msg'),
+            ('group', 'group'),
+            ('status', 'status'),
+            ('manager', 'manager')
 
         )
     )

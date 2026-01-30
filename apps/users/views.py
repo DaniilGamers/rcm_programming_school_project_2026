@@ -6,15 +6,13 @@ import jwt
 
 from rest_framework.generics import GenericAPIView, CreateAPIView, ListAPIView
 
-from rest_framework.views import APIView
-
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from core.permissions.is_superAdmin import IsSuperAdmin
 
 from django.conf import settings
 
-from apps.users.serializers import UserSerializer, SetPasswordSerializer
+from apps.users.serializers import UserSerializer
 
 from core.services.activate_link_generator import generate_activation_token
 
@@ -33,7 +31,6 @@ class CustomPagination(PageNumberPagination):
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
 
-    page_size = len(queryset)
 
 
 class StaffListCreateView(CreateAPIView):

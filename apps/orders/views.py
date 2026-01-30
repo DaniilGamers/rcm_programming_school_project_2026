@@ -1,18 +1,24 @@
-from apps.orders.serializers import OrdersSerializer, GroupSerializer
+from apps.orders.serializers import OrdersSerializer, GroupSerializer, CommentSerializer
 
 from rest_framework.permissions import IsAuthenticated
+
+from rest_framework.views import APIView
 
 from core.permissions.is_admin_or_manager import IsAdminOrManager
 
 from apps.orders.filter import OrderFilter
 
-from apps.orders.models import OrdersModel, GroupModel
+from django.db.models import Count
+
+from apps.orders.models import OrdersModel, GroupModel, CommentModel
 
 from django.views import View
 
+from django.shortcuts import get_object_or_404
+
 from datetime import datetime
 
-from rest_framework.generics import (GenericAPIView, ListAPIView, ListCreateAPIView, RetrieveUpdateAPIView)
+from rest_framework.generics import (ListAPIView, ListCreateAPIView, RetrieveUpdateAPIView)
 
 from rest_framework.pagination import PageNumberPagination
 
@@ -20,7 +26,11 @@ import xlwt
 
 from io import BytesIO
 
-from django.http import FileResponse, HttpResponseForbidden
+from django.http import FileResponse
+
+from rest_framework.response import Response
+
+from rest_framework import status
 
 
 class CustomPagination(PageNumberPagination):
@@ -32,7 +42,24 @@ class CustomGroupPagination(PageNumberPagination):
     queryset = GroupModel.objects.all()
     serializer_class = GroupSerializer
 
-    page_size = len(queryset)
+    def get_page_size(self, request):
+        # dynamically compute page_size if needed
+        qs = self.queryset if hasattr(self, 'queryset') else None
+        if qs:
+            return len(qs)
+        return self.page_size
+
+
+class CustomCommentPagination(PageNumberPagination):
+    queryset = CommentModel.objects.all()
+    serializer_class = CommentSerializer
+
+    def get_page_size(self, request):
+        # dynamically compute page_size if needed
+        qs = self.queryset if hasattr(self, 'queryset') else None
+        if qs:
+            return len(qs)
+        return self.page_size
 
 
 order = OrdersModel()
@@ -44,6 +71,9 @@ class OrdersListView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     queryset = OrdersModel.objects.all()
     filterset_class = OrderFilter
+
+    def get_queryset(self):
+        return OrdersModel.objects.annotate(comments_count=Count('messages')).order_by('-id')
 
 
 class EditOrderView(RetrieveUpdateAPIView):
@@ -153,3 +183,54 @@ class GetGroupsView(ListAPIView):
     queryset = GroupModel.objects.all()
     pagination_class = CustomGroupPagination
     serializer_class = GroupSerializer
+
+
+class SendCommentView(APIView):
+    permission_classes = (IsAdminOrManager,)
+
+    def post(self, request, order_id):
+        order = get_object_or_404(OrdersModel, id=order_id)
+        user_surname = request.user.name
+
+        # 🔒 RULE:
+        # comment allowed only if manager is null OR current user
+        if order.manager and order.manager != user_surname:
+            return Response(
+                {"detail": "You cannot comment this order"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = CommentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # 💬 create comment
+        CommentModel.objects.create(
+            order=order,
+            text=serializer.validated_data["text"],
+            sender_name=request.user.name + ' ' + request.user.surname
+        )
+
+        # 👤 assign manager if empty
+        if not order.manager:
+            order.manager = user_surname
+
+        # 🔄 update status
+        if order.status in (None, "New"):
+            order.status = "In Work"
+
+        order.save()
+
+        return Response(
+            {"detail": "Comment added successfully"},
+            status=status.HTTP_201_CREATED
+        )
+
+
+class ViewCommentsView(ListAPIView):
+    serializer_class = CommentSerializer
+    pagination_class = CustomCommentPagination
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        order_id = self.kwargs.get("order_id")  # get order_id from URL
+        return CommentModel.objects.filter(order__id=order_id).order_by("created_at")

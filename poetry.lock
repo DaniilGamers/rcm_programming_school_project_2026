@@ -49,6 +49,20 @@ files = [
 Django = ">=4.2"
 
 [[package]]
+name = "djangorestframework"
+version = "3.16.1"
+description = "Web APIs for Django, made easy."
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "djangorestframework-3.16.1-py3-none-any.whl", hash = "sha256:33a59f47fb9c85ede792cbf88bde71893bcda0667bc573f784649521f1102cec"},
+    {file = "djangorestframework-3.16.1.tar.gz", hash = "sha256:166809528b1aced0a17dc66c24492af18049f2c9420dbd0be29422029cfc3ff7"},
+]
+
+[package.dependencies]
+django = ">=4.2"
+
+[[package]]
 name = "et-xmlfile"
 version = "2.0.0"
 description = "An implementation of lxml.xmlfile for the standard library"
@@ -113,4 +127,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "bc3174839ea6ea077406f8a2587a47b030e414cce8a90cee7df836e3618d2de3"
+content-hash = "8fc3626e588582e553588dc368784874134f1496bafa54c738273ae3da816c13"

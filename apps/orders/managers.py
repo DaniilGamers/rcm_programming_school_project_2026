@@ -30,7 +30,7 @@ class OrderQuerySet(models.QuerySet):
         return self.filter(status=status)
 
     def by_group(self, group):
-        return self.filter(group=group)
+        return self.filter(group__name__iexact=group_name)
 
     def by_date_startswith(self, date_startswith):
         return self.filter(date_startswith=date_startswith)
@@ -73,8 +73,8 @@ class OrderManager(models.Manager):
     def by_status(self, status):
         return self.get_queryset().by_status(status)
 
-    def by_group(self, group):
-        return self.get_queryset().by_group(group)
+    def by_group_name(self, group_name):
+        return self.get_queryset().by_group_name(group_name)
 
     def by_date_startswith(self, date_startswith):
         return self.get_queryset().by_date_startswith(date_startswith)
