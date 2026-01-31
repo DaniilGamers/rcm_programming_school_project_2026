@@ -44,6 +44,7 @@ class CustomGroupPagination(PageNumberPagination):
 
     page_size = -0
 
+
 class CustomCommentPagination(PageNumberPagination):
     queryset = CommentModel.objects.all()
     serializer_class = CommentSerializer
