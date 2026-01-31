@@ -42,13 +42,7 @@ class CustomGroupPagination(PageNumberPagination):
     queryset = GroupModel.objects.all()
     serializer_class = GroupSerializer
 
-    def get_page_size(self, request):
-        # dynamically compute page_size if needed
-        qs = self.queryset if hasattr(self, 'queryset') else None
-        if qs:
-            return len(qs)
-        return self.page_size
-
+    page_size = -0
 
 class CustomCommentPagination(PageNumberPagination):
     queryset = CommentModel.objects.all()
@@ -234,3 +228,21 @@ class ViewCommentsView(ListAPIView):
     def get_queryset(self):
         order_id = self.kwargs.get("order_id")  # get order_id from URL
         return CommentModel.objects.filter(order__id=order_id).order_by("created_at")
+
+
+class OrderStatusCountView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        manager = request.query_params.get('manager')
+        qs = OrdersModel.objects.all()
+        if manager:
+            qs = qs.filter(manager=manager)
+
+        by_status = qs.values('status').annotate(total=Count('id'))
+        total = qs.count()
+
+        return Response({
+            "total": total,
+            "by_status": by_status
+        })
