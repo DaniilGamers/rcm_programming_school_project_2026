@@ -13,8 +13,8 @@ class OrderFilter(filters.FilterSet):
     course_type = filters.BaseInFilter('course_type')
     status = filters.BaseInFilter('status')
     group = filters.CharFilter(field_name='group__name', lookup_expr='iexact')
-    date_startswith = filters.DateFilter('created_at', 'gte')
-    date_endswith = filters.DateFilter('created_at', 'lte')
+    start_date = filters.DateFilter('created_at', 'gte')
+    end_date = filters.DateFilter('created_at', 'lte')
     manager = filters.BaseInFilter('manager')
 
     order = filters.OrderingFilter(

@@ -103,6 +103,12 @@ class ExportOrdersView(View):
                    "Already Paid", "Created At", "Group", "UTM", "Msg",
                    "Status", "Manager"]
 
+        ALLOWED_ORDER_FIELDS = {
+            "id", "name", "surname", "email", "phone", "age", "course",
+            "course_format", "course_type", "sum", "alreadyPaid", "created_at",
+            "group", "status", "manager"
+        }
+
         max_widths = [len(header) for header in headers]
 
         header_style = xlwt.easyxf(
@@ -128,9 +134,46 @@ class ExportOrdersView(View):
                 return "null"
             return str(value)
 
-        orders = OrdersModel.objects.select_related("group").all()
+        qs = OrdersModel.objects.select_related("group").all()
 
-        for row_num, o in enumerate(orders, start=1):
+        name = request.GET.get("name")
+        if name:
+            qs = qs.filter(name__icontains=name)
+
+        status = request.GET.get("status")
+        if status:
+            qs = qs.filter(status=status)
+
+        manager = request.GET.get("manager")
+        if manager:
+            qs = qs.filter(manager=manager)
+
+        group = request.GET.get("group")
+        if group:
+            qs = qs.filter(group__name__iexact=group)
+
+        course = request.GET.get("course")
+        if course:
+            qs = qs.filter(course=course)
+
+        start_date = request.GET.get("start_date")
+        if start_date:
+            qs = qs.filter(created_at__gte=start_date)
+
+        end_date = request.GET.get("end_date")
+        if end_date:
+            qs = qs.filter(created_at__lte=end_date)
+
+        order_param = request.GET.get("order")
+        if order_param:
+
+            desc = order_param.startswith('-')
+            field_name = order_param[1:] if desc else order_param
+
+            if field_name in ALLOWED_ORDER_FIELDS:
+                qs = qs.order_by(order_param)
+
+        for row_num, o in enumerate(qs, start=1):
             row = [
                 excel_nullable(o.id),
                 excel_nullable(o.name),
@@ -187,8 +230,6 @@ class SendCommentView(APIView):
         order = get_object_or_404(OrdersModel, id=order_id)
         user_surname = request.user.name
 
-        # 🔒 RULE:
-        # comment allowed only if manager is null OR current user
         if order.manager and order.manager != user_surname:
             return Response(
                 {"detail": "You cannot comment this order"},
@@ -198,18 +239,15 @@ class SendCommentView(APIView):
         serializer = CommentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # 💬 create comment
         CommentModel.objects.create(
             order=order,
             text=serializer.validated_data["text"],
             sender_name=request.user.name + ' ' + request.user.surname
         )
 
-        # 👤 assign manager if empty
         if not order.manager:
             order.manager = user_surname
 
-        # 🔄 update status
         if order.status in (None, "New"):
             order.status = "In Work"
 

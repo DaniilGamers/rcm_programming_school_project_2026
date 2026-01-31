@@ -29,14 +29,14 @@ class OrderQuerySet(models.QuerySet):
     def by_status(self, status):
         return self.filter(status=status)
 
-    def by_group(self, group):
+    def by_group(self, group_name):
         return self.filter(group__name__iexact=group_name)
 
-    def by_date_startswith(self, date_startswith):
-        return self.filter(date_startswith=date_startswith)
+    def by_start_date(self, start_date):
+        return self.filter(start_date=start_date)
 
-    def by_date_endswith(self, date_endswith):
-        return self.filter(date_endswith=date_endswith)
+    def by_end_date(self, end_date):
+        return self.filter(end_date=end_date)
 
     def by_manager(self, manager):
         return self.filter(manager=manager)
@@ -76,11 +76,11 @@ class OrderManager(models.Manager):
     def by_group_name(self, group_name):
         return self.get_queryset().by_group_name(group_name)
 
-    def by_date_startswith(self, date_startswith):
-        return self.get_queryset().by_date_startswith(date_startswith)
+    def by_start_date(self, start_date):
+        return self.get_queryset().by_start_date(start_date)
 
-    def by_date_endswith(self, date_endswith):
-        return self.get_queryset().by_date_endswith(date_endswith)
+    def by_end_date(self, end_date):
+        return self.get_queryset().by_end_date(end_date)
 
     def by_manager(self, manager):
         return self.get_queryset().by_manager(manager)
