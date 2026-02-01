@@ -1,0 +1,620 @@
+{
+  "info": {
+    "_postman_id": "625dab45-bbb8-4e86-acde-2cdb9d0fd1b6",
+    "name": "project_test_2026",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "35284563"
+  },
+  "item": [
+    {
+      "name": "admin/manager",
+      "item": [
+        {
+          "name": "getStaffList",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NjEzMDY4LCJpYXQiOjE3Njk2MTEyNjgsImp0aSI6IjViYTA4NzcyNGVlZTQ5MDM4OGYxNmRjMTViYTFkMzg1IiwidXNlcl9pZCI6IjEifQ.cU3bvuwyg39rOpPaubomw3slpuOPJTpQeCJCDUBtXHk",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "testManager@gmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "super123",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{host}}/users/view_managerList",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "users",
+                "view_managerList"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create_manager",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5Mjc4ODAzLCJpYXQiOjE3NjkyNzcwMDMsImp0aSI6IjUzMDQ0Mzc3MWNlYzQ2ZThiZTU5ZmQ5ODc0NDgyYWJiIiwidXNlcl9pZCI6IjEifQ.uGFeVjb2QMm3Rd5cT53ayT1TTsF8tkm09wgykctgTPg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\" : \"manager2@gmail.com\",\r\n    \"name\" : \"Daniel\",\r\n    \"surname\" : \"Gs\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{host}}/users/create_manager",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "users",
+                "create_manager"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "block_manager",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5MjgwNzA2LCJpYXQiOjE3NjkyNzg5MDcsImp0aSI6ImU3YTBkNDQxM2E2NjQ0ZDdiMTgyNzNhNTUwYTYxNTdhIiwidXNlcl9pZCI6IjEifQ.1xYdV2TbPcSwYvvY2-uiJnC-WCfYIpKk-sNcKcI-n8Q",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "admin@gmail.com",
+                  "type": "text",
+                  "uuid": "ef572897-b4b8-47fc-8b6b-5b3400ed25ca"
+                },
+                {
+                  "key": "password",
+                  "value": "admin",
+                  "type": "text",
+                  "uuid": "581600ce-36ee-4a8b-a8bf-1233f68d190f"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{host}}/users/block_manager/3",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "users",
+                "block_manager",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "unblock_manager",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5MjgxNzMyLCJpYXQiOjE3NjkyNzk5MzIsImp0aSI6IjA1N2ZjOGUxOWJjZTRiMTJhYmFiZmY5MTc4Nzk2ODE5IiwidXNlcl9pZCI6IjEifQ.tsBVZeeCLvgJVMZH3qj9LCu7ZrgCBsl4yoojI8Dw028",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "admin@gmail.com",
+                  "type": "text",
+                  "uuid": "ef572897-b4b8-47fc-8b6b-5b3400ed25ca"
+                },
+                {
+                  "key": "password",
+                  "value": "admin",
+                  "type": "text",
+                  "uuid": "581600ce-36ee-4a8b-a8bf-1233f68d190f"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{host}}/users/unblock_manager/3",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "users",
+                "unblock_manager",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "set-password",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "password",
+                  "value": "test1234",
+                  "type": "text",
+                  "uuid": "ef572897-b4b8-47fc-8b6b-5b3400ed25ca"
+                },
+                {
+                  "key": "password_confirm",
+                  "value": "test1234",
+                  "type": "text",
+                  "uuid": "581600ce-36ee-4a8b-a8bf-1233f68d190f"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{host}}/users/set_password/_W_DyoKC2akIzy5_TJPDDYFWig_fjahTid5DKU8REOk",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "users",
+                "set_password",
+                "_W_DyoKC2akIzy5_TJPDDYFWig_fjahTid5DKU8REOk"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "send_activate_link",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NTQwNTcwLCJpYXQiOjE3Njk1Mzg3NzAsImp0aSI6ImMxZmFhMDYxYWU3ZjQ2YTRhOGViZTk4ZGUwZWM5NDk3IiwidXNlcl9pZCI6IjEifQ.bo6HAcY7LxEatUf7jU1QG5yI-q5_2LPGX-ublXR8qk4",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/users/activate_manager/2",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "users",
+                "activate_manager",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "check_user",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NzA4NTQ1LCJpYXQiOjE3Njk3MDY3NDUsImp0aSI6Ijg0MTU2MzU0YTUyZDRjMThiYzU0MDYwMDQ0NmI0ZDlkIiwidXNlcl9pZCI6IjEifQ.-eyVGf-Ca2S0a1vvDDb-VzHO_ClwfkmaAoOc5J9T3ZQ",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/users/checkUser",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "users",
+                "checkUser"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "auth",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "admin@gmail.com",
+                  "type": "text",
+                  "uuid": "ef572897-b4b8-47fc-8b6b-5b3400ed25ca"
+                },
+                {
+                  "key": "password",
+                  "value": "admin",
+                  "type": "text",
+                  "uuid": "581600ce-36ee-4a8b-a8bf-1233f68d190f"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{host}}/auth/login",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "orders",
+      "item": [
+        {
+          "name": "getListOrder",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NTQzNjY1LCJpYXQiOjE3Njk1NDE4NjUsImp0aSI6IjE5Y2Q4NDVmNTc1ZTQzNGI4MGJhNmI2YTQyNGJhNTYzIiwidXNlcl9pZCI6IjEifQ.ycqnumqEFsINyc5zH3zHjMaXwcgrKp9hlfLQ7no04OY",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/orders?page=1&order=id&age=35",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "order",
+                  "value": "id"
+                },
+                {
+                  "key": "age",
+                  "value": "35"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add_group",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5Mjk0MTA4LCJpYXQiOjE3NjkyOTIzMDgsImp0aSI6IjM5YzM2ZWVkYzA2NjRlYjVhZDNmMTA3NmFkNzE4MzgzIiwidXNlcl9pZCI6IjMifQ.0e-0bt-e2m06aj5mEyfFxtUOODVS_eGN9XXIGtaFkiU",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "test",
+                  "type": "text",
+                  "uuid": "ef572897-b4b8-47fc-8b6b-5b3400ed25ca"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{host}}/orders/add_group",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "orders",
+                "add_group"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "edit_order",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NzE4MTgxLCJpYXQiOjE3Njk3MTYzODEsImp0aSI6ImNiNmQ5YmExMjU5ZjQ5ZjRiMTFjOWRiNzA4YzZkMmZhIiwidXNlcl9pZCI6IjEifQ.QVAtSYuINPqJHmjYCUplP5EZ5eOX0ckPFqmBQIMGLus",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "5a2341d5-f4f1-4b94-a8dc-4ef6869f25d2"
+                },
+                {
+                  "key": "sum",
+                  "value": "1000",
+                  "type": "text",
+                  "uuid": "25ea19e3-4cf0-49a4-a5e5-df45a68437e7"
+                },
+                {
+                  "key": "group_id",
+                  "value": "1",
+                  "type": "text",
+                  "uuid": "b4b6c3e5-e9f8-4b60-8821-08c4dafc03aa"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{host}}/orders/edit_order/10/",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "orders",
+                "edit_order",
+                "10",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "export",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NjQwNDQyLCJpYXQiOjE3Njk2Mzg2NDIsImp0aSI6IjJlNGJjMmE3YmQwZTQwODdiYWVjZTJmYjhmOGM1NTM0IiwidXNlcl9pZCI6IjEifQ.HVXnwqO1hmHT2WsT9HkU9SyzeVXH3v69J18zcAKul0Y",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/orders/export",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "orders",
+                "export"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getGroups",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "send_comment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NzExOTE5LCJpYXQiOjE3Njk3MTAxMTksImp0aSI6ImU3YThhMGIxMjdlNDQyYzY4OWJkYWViYjhlMDVmNTI5IiwidXNlcl9pZCI6IjEifQ.XpqqifTYKmaM0x0fymbB4HZVUhAUd7xmgksCytJc-1Q",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "text",
+                  "value": "Hi",
+                  "type": "text",
+                  "uuid": "04acc38c-03bb-40a6-adae-9a54811f483c"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{host}}/orders/send_comment/495/",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "orders",
+                "send_comment",
+                "495",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ViewComments",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NzExOTE5LCJpYXQiOjE3Njk3MTAxMTksImp0aSI6ImU3YThhMGIxMjdlNDQyYzY4OWJkYWViYjhlMDVmNTI5IiwidXNlcl9pZCI6IjEifQ.XpqqifTYKmaM0x0fymbB4HZVUhAUd7xmgksCytJc-1Q",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/orders/view_comments",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "orders",
+                "view_comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "status_order_count",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5NTQzNjY1LCJpYXQiOjE3Njk1NDE4NjUsImp0aSI6IjE5Y2Q4NDVmNTc1ZTQzNGI4MGJhNmI2YTQyNGJhNTYzIiwidXNlcl9pZCI6IjEifQ.ycqnumqEFsINyc5zH3zHjMaXwcgrKp9hlfLQ7no04OY",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{host}}/orders?page=1&order=id&age=35",
+              "host": [
+                "{{host}}"
+              ],
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "order",
+                  "value": "id"
+                },
+                {
+                  "key": "age",
+                  "value": "35"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
