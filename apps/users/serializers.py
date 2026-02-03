@@ -8,10 +8,6 @@ UserModel = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     last_login_display = serializers.SerializerMethodField()
 
-    name = serializers.CharField(required=True)
-    surname = serializers.CharField(required=True)
-    email = serializers.EmailField(required=True)
-
     class Meta:
 
         model = UserModel
@@ -26,19 +22,13 @@ class UserSerializer(serializers.ModelSerializer):
 
         )
 
+    read_only_fields = ('id', 'email', 'is_active', 'is_superuser')
+
     def get_last_login_display(self, obj):
         if obj.last_login:
             return obj.last_login.strftime("%B %d, %Y")
-        return None
-
-    read_only_fields = ('id', 'email', 'name', 'surname', 'is_active', 'last_login')
-    extra_kwargs = {
-        'password': {
-            'write_only': True,
-            'required': False,
-            'allow_blank': True
-        },
-    }
+        else:
+            return None
 
 
 class SetPasswordSerializer(serializers.Serializer):

@@ -2,15 +2,15 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import status
 
-import jwt
+from django.utils.decorators import method_decorator
+
+from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.generics import GenericAPIView, CreateAPIView, ListAPIView
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from core.permissions.is_superAdmin import IsSuperAdmin
-
-from django.conf import settings
 
 from apps.users.serializers import UserSerializer
 
@@ -20,9 +20,9 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
 
-from rest_framework_simplejwt.authentication import JWTAuthentication
-
 from rest_framework.pagination import PageNumberPagination
+
+from core.services.token_expireDate_check import token_expireDate_check
 
 UserModel = get_user_model()
 
@@ -30,7 +30,6 @@ UserModel = get_user_model()
 class CustomPagination(PageNumberPagination):
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
-
 
 
 class StaffListCreateView(CreateAPIView):
@@ -104,27 +103,15 @@ class SetPasswordView(GenericAPIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, token):
-        try:
-            payload = jwt.decode(
-                token,
-                settings.SECRET_KEY,
-                algorithms=["HS256"]
-            )
-        except jwt.ExpiredSignatureError:
-            return Response({"detail": "Token expired"}, status=400)
-        except jwt.InvalidTokenError:
-            return Response({"detail": "Invalid token"}, status=400)
+        response = token_expireDate_check(request, token)
 
-        if payload.get("token_type") != "activation":
-            return Response({"detail": "Wrong token type"}, status=400)
+        if isinstance(response, Response):
+            return response
 
-        user = UserModel.objects.get(id=payload["user_id"])
-
-        user.set_password(request.data["password"])
-        user.is_active = True
-        user.save()
-
-        return Response({"detail": "Account activated"})
+        return Response(
+            {"detail": "Password set successfully"},
+            status=status.HTTP_200_OK
+        )
 
 
 class MeView(GenericAPIView):
@@ -134,11 +121,6 @@ class MeView(GenericAPIView):
 
     def get(self, request):
         user = request.user
-        return Response({
-            "id": user.id,
-            "email": user.email,
-            "name": user.name,
-            "surname": user.surname,
-            "is_superuser": user.is_superuser,
-            "is_staff": user.is_staff,
-        })
+
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status.HTTP_200_OK)
