@@ -19,17 +19,15 @@ from .extra_conf import *
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(BASE_DIR / ".env")
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = "SECRET_KEY_HERE"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+DEBUG = True
 
 ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'users.UserModel'
@@ -98,11 +96,11 @@ WSGI_APPLICATION = 'configs.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv("MYSQL_DATABASE"),
-        'USER': os.getenv("MYSQL_USER"),
-        'PASSWORD': os.getenv("MYSQL_PASSWORD"),
-        'HOST': os.getenv("MYSQL_HOST"),
-        'PORT': os.getenv("MYSQL_PORT")
+        'NAME': 'MYQSL_DATABASE_HERE',
+        'USER': 'MYQSL_USER_HERE',
+        'PASSWORD': 'MYQSL_PASSWORD_HERE',
+        'HOST': 'MYQSL_HOST_HERE',
+        'PORT': 'MYQSL_PORT_HERE'
     }
 }
 
