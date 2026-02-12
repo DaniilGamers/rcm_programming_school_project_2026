@@ -39,18 +39,6 @@ class CustomPagination(PageNumberPagination):
     page_query_param = "page"
 
 
-class CustomGroupPagination(PageNumberPagination):
-    queryset = GroupModel.objects.all()
-    serializer_class = GroupSerializer
-
-    def get_page_size(self, request):
-        # dynamically compute page_size if needed
-        qs = self.queryset if hasattr(self, 'queryset') else None
-        if qs:
-            return len(qs)
-        return self.page_size
-
-
 class CustomCommentPagination(PageNumberPagination):
     queryset = CommentModel.objects.all()
     serializer_class = CommentSerializer
