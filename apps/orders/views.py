@@ -43,7 +43,12 @@ class CustomGroupPagination(PageNumberPagination):
     queryset = GroupModel.objects.all()
     serializer_class = GroupSerializer
 
-    page_size = -0
+    def get_page_size(self, request):
+        # dynamically compute page_size if needed
+        qs = self.queryset if hasattr(self, 'queryset') else None
+        if qs:
+            return len(qs)
+        return self.page_size
 
 
 class CustomCommentPagination(PageNumberPagination):
@@ -79,10 +84,27 @@ class EditOrderView(RetrieveUpdateAPIView):
     lookup_field = "id"
 
 
-class AddGroupView(ListCreateAPIView):
+class GroupView(GenericAPIView):
     permission_classes = (IsAdminOrManager,)
     queryset = GroupModel.objects.all()
+    pagination_class = None
     serializer_class = GroupSerializer
+
+    def get(self, request):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.serializer_class(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ExportOrdersView(View):
@@ -103,21 +125,30 @@ class ExportOrdersView(View):
         )
 
 
-class GetGroupsView(ListAPIView):
-    permission_classes = (IsAdminOrManager,)
-    queryset = GroupModel.objects.all()
-    pagination_class = CustomGroupPagination
-    serializer_class = GroupSerializer
-
-
-class SendCommentView(GenericAPIView):
+class CommentView(GenericAPIView):
     permission_classes = (IsSameManager,)
+    serializer_class = CommentSerializer
+    pagination_class = CustomCommentPagination
+
+    def get_queryset(self):
+        order_id = self.kwargs.get("order_id")  # get order_id from URL
+        return CommentModel.objects.filter(order__id=order_id).order_by("created_at")
+
+    def get(self, request, order_id):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.serializer_class(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
 
     def post(self, request, order_id):
         order = get_object_or_404(OrdersModel, id=order_id)
-        user_surname = request.user.name
+        self.check_object_permissions(request, order)
 
-        serializer = CommentSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         CommentModel.objects.create(
@@ -127,7 +158,7 @@ class SendCommentView(GenericAPIView):
         )
 
         if not order.manager:
-            order.manager = user_surname
+            order.manager = request.user.name
 
         if order.status in (None, "New"):
             order.status = "In Work"
@@ -138,16 +169,6 @@ class SendCommentView(GenericAPIView):
             {"detail": "Comment added successfully"},
             status=status.HTTP_201_CREATED
         )
-
-
-class ViewCommentsView(ListAPIView):
-    serializer_class = CommentSerializer
-    pagination_class = CustomCommentPagination
-    permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self):
-        order_id = self.kwargs.get("order_id")  # get order_id from URL
-        return CommentModel.objects.filter(order__id=order_id).order_by("created_at")
 
 
 class OrderStatusCountView(GenericAPIView):

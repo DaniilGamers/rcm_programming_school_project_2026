@@ -32,24 +32,32 @@ class CustomPagination(PageNumberPagination):
     serializer_class = UserSerializer
 
 
-class StaffListCreateView(CreateAPIView):
+class StaffView(GenericAPIView):
     permission_classes = (IsSuperAdmin,)
-    queryset = UserModel.objects.all()
     serializer_class = UserSerializer
-
-
-class StaffListCheckView(ListAPIView):
-    permission_classes = (IsSuperAdmin,)
     pagination_class = CustomPagination
-    serializer_class = UserSerializer
 
     def get_queryset(self):
         qs = UserModel.objects.all()
-
         if self.request.user.is_superuser:
             qs = qs.filter(is_staff=True, is_superuser=False)
-
         return qs
+
+    def get(self, request):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class BlockStaffView(GenericAPIView):
