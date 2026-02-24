@@ -6,6 +6,9 @@ from django.http import FileResponse
 
 
 def export_excel(qs):
+    if not qs:
+        return None
+
     palette_index = 23
     xlwt.add_palette_colour("mygreen", palette_index)
 

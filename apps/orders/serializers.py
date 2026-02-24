@@ -21,7 +21,7 @@ class OrdersSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrdersModel
         fields = ('id', 'name', 'surname',  'email', 'phone', 'age', 'course', 'course_format', 'course_format', 'course_type', 'sum', 'alreadyPaid', 'group', 'created_at', 'created_date', 'utm', 'msg', 'status', 'manager', 'group_id', 'comments_count')
-        read_only_fields = ('id', 'created_at', 'comments_count')
+        read_only_fields = ('id', 'comments_count')
 
     def get_created_date(self, obj):
         if obj.created_at:

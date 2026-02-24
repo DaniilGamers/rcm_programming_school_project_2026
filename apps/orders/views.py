@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from apps.orders.serializers import OrdersSerializer, GroupSerializer, CommentSerializer
 
 from rest_framework.permissions import IsAuthenticated
@@ -8,7 +10,7 @@ from core.permissions.is_admin_or_manager import IsAdminOrManager
 
 from apps.orders.filter import OrderFilter
 
-from django.db.models import Count
+from django.db.models import Count, Case, When, Value, CharField, F, Q
 
 from apps.orders.models import OrdersModel, GroupModel, CommentModel
 
@@ -31,7 +33,7 @@ from core.services.export_excel import export_excel
 
 from core.services.filter_orders import get_filtered_orders
 
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 
 
 class CustomPagination(PageNumberPagination):
@@ -39,15 +41,25 @@ class CustomPagination(PageNumberPagination):
     page_query_param = "page"
 
 
+class CustomGroupPagination(PageNumberPagination):
+    queryset = CommentModel.objects.all()
+    serializer_class = GroupSerializer
+
+    def get_page_size(self, request):
+        qs = getattr(self, 'queryset', None)
+        if qs:
+            return qs.count()
+        return self.page_size
+
+
 class CustomCommentPagination(PageNumberPagination):
     queryset = CommentModel.objects.all()
     serializer_class = CommentSerializer
 
     def get_page_size(self, request):
-        # dynamically compute page_size if needed
-        qs = self.queryset if hasattr(self, 'queryset') else None
+        qs = getattr(self, 'queryset', None)
         if qs:
-            return len(qs)
+            return qs.count()
         return self.page_size
 
 
@@ -62,7 +74,38 @@ class OrdersListView(ListAPIView):
     filterset_class = OrderFilter
 
     def get_queryset(self):
-        return OrdersModel.objects.annotate(comments_count=Count('messages')).order_by('-id')
+        queryset = OrdersModel.objects.annotate(comments_count=Count('messages')).order_by('-id')
+
+        start_date_str = self.request.query_params.get("start_date")
+        end_date_str = self.request.query_params.get("end_date")
+
+        if start_date_str:
+            try:
+                date_value = datetime.strptime(start_date_str, "%Y-%m-%d").date()
+                start_of_day = timezone.make_aware(datetime.combine(date_value, time.min))
+                end_of_day = timezone.make_aware(datetime.combine(date_value, time.max))
+
+                queryset = queryset.filter(
+                    Q(start_date__range=(start_of_day, end_of_day)) |
+                    Q(end_date__range=(start_of_day, end_of_day))
+                )
+            except ValueError:
+                pass  # Ignore invalid dates
+
+        if end_date_str:
+            try:
+                date_value = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+                start_of_day = timezone.make_aware(datetime.combine(date_value, time.min))
+                end_of_day = timezone.make_aware(datetime.combine(date_value, time.max))
+
+                queryset = queryset.filter(
+                    Q(start_date__range=(start_of_day, end_of_day)) |
+                    Q(end_date__range=(start_of_day, end_of_day))
+                )
+            except ValueError:
+                pass  # Ignore invalid dates
+
+        return queryset
 
 
 class EditOrderView(RetrieveUpdateAPIView):
@@ -75,7 +118,7 @@ class EditOrderView(RetrieveUpdateAPIView):
 class GroupView(GenericAPIView):
     permission_classes = (IsAdminOrManager,)
     queryset = GroupModel.objects.all()
-    pagination_class = None
+    pagination_class = CustomGroupPagination
     serializer_class = GroupSerializer
 
     def get(self, request):
@@ -104,6 +147,9 @@ class ExportOrdersView(View):
         qs = get_filtered_orders(request, qs)
 
         buffer = export_excel(qs)
+
+        if not buffer:
+            return HttpResponse("No data to export", status=400)
 
         return FileResponse(
             buffer,
@@ -163,15 +209,36 @@ class OrderStatusCountView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        manager = request.query_params.get('manager')
         qs = OrdersModel.objects.all()
-        if manager:
-            qs = qs.filter(manager=manager)
 
-        by_status = qs.values('status').annotate(total=Count('id'))
-        total = qs.count()
+        # Replace null/empty/"new" with "New"
+        qs = qs.annotate(
+            status_grouped=Case(
+                When(Q(status__isnull=True) | Q(status__iexact="new") | Q(status=""), then=Value("New")),
+                default=F("status"),
+                output_field=CharField()
+            )
+        )
+
+        # Overall counts
+        by_status = qs.values("status_grouped").annotate(total=Count("id"))
+
+        # Per-manager counts
+        raw = qs.values("manager", "status_grouped").annotate(total=Count("id"))
+        by_manager_dict = defaultdict(list)
+        for item in raw:
+            by_manager_dict[item["manager"]].append({
+                "status": item["status_grouped"],
+                "total": item["total"]
+            })
+
+        by_manager = [
+            {"manager": manager, "total": sum(s["total"] for s in statuses), "by_status": statuses}
+            for manager, statuses in by_manager_dict.items()
+        ]
 
         return Response({
-            "total": total,
-            "by_status": by_status
+            "total": qs.count(),
+            "by_status": list(by_status),
+            "by_manager": by_manager
         })

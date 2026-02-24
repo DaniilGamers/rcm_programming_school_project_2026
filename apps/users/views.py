@@ -31,17 +31,18 @@ class CustomPagination(PageNumberPagination):
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
 
+    def get_page_size(self, request):
+        qs = getattr(self, 'queryset', None)
+        if qs:
+            return qs.count()
+        return self.page_size
+
 
 class StaffView(GenericAPIView):
     permission_classes = (IsSuperAdmin,)
     serializer_class = UserSerializer
+    queryset = UserModel.objects.all()
     pagination_class = CustomPagination
-
-    def get_queryset(self):
-        qs = UserModel.objects.all()
-        if self.request.user.is_superuser:
-            qs = qs.filter(is_staff=True, is_superuser=False)
-        return qs
 
     def get(self, request):
         queryset = self.get_queryset()
