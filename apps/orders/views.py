@@ -1,16 +1,12 @@
-from collections import defaultdict
-
 from apps.orders.serializers import OrdersSerializer, GroupSerializer, CommentSerializer
 
 from rest_framework.permissions import IsAuthenticated
-
-from rest_framework.views import APIView
 
 from core.permissions.is_admin_or_manager import IsAdminOrManager
 
 from apps.orders.filter import OrderFilter
 
-from django.db.models import Count, Case, When, Value, CharField, F, Q
+from django.db.models import Count
 
 from apps.orders.models import OrdersModel, GroupModel, CommentModel
 
@@ -20,48 +16,27 @@ from datetime import datetime
 
 from django.shortcuts import get_object_or_404
 
-from rest_framework.generics import (ListAPIView, ListCreateAPIView, RetrieveUpdateAPIView, GenericAPIView)
+from rest_framework.generics import (ListAPIView, RetrieveUpdateAPIView, GenericAPIView)
 
-from rest_framework.pagination import PageNumberPagination
+from apps.orders.pagination import CustomPagination, CustomGroupPagination, CustomCommentPagination
 
 from rest_framework.response import Response
 
 from rest_framework import status
 
 from core.permissions.is_same_manager import IsSameManager
+
 from core.services.export_excel import export_excel
 
 from core.services.filter_orders import get_filtered_orders
 
 from django.http import FileResponse, HttpResponse
 
+from core.services.order_filter_service import OrderFilterService
 
-class CustomPagination(PageNumberPagination):
-    page_size = 25
-    page_query_param = "page"
+from core.services.sendComment import SendCommentService
 
-
-class CustomGroupPagination(PageNumberPagination):
-    queryset = CommentModel.objects.all()
-    serializer_class = GroupSerializer
-
-    def get_page_size(self, request):
-        qs = getattr(self, 'queryset', None)
-        if qs:
-            return qs.count()
-        return self.page_size
-
-
-class CustomCommentPagination(PageNumberPagination):
-    queryset = CommentModel.objects.all()
-    serializer_class = CommentSerializer
-
-    def get_page_size(self, request):
-        qs = getattr(self, 'queryset', None)
-        if qs:
-            return qs.count()
-        return self.page_size
-
+from core.services.order_status_count import OrderStatusCountService
 
 order = OrdersModel()
 
@@ -76,36 +51,11 @@ class OrdersListView(ListAPIView):
     def get_queryset(self):
         queryset = OrdersModel.objects.annotate(comments_count=Count('messages')).order_by('-id')
 
-        start_date_str = self.request.query_params.get("start_date")
-        end_date_str = self.request.query_params.get("end_date")
-
-        if start_date_str:
-            try:
-                date_value = datetime.strptime(start_date_str, "%Y-%m-%d").date()
-                start_of_day = timezone.make_aware(datetime.combine(date_value, time.min))
-                end_of_day = timezone.make_aware(datetime.combine(date_value, time.max))
-
-                queryset = queryset.filter(
-                    Q(start_date__range=(start_of_day, end_of_day)) |
-                    Q(end_date__range=(start_of_day, end_of_day))
-                )
-            except ValueError:
-                pass  # Ignore invalid dates
-
-        if end_date_str:
-            try:
-                date_value = datetime.strptime(end_date_str, "%Y-%m-%d").date()
-                start_of_day = timezone.make_aware(datetime.combine(date_value, time.min))
-                end_of_day = timezone.make_aware(datetime.combine(date_value, time.max))
-
-                queryset = queryset.filter(
-                    Q(start_date__range=(start_of_day, end_of_day)) |
-                    Q(end_date__range=(start_of_day, end_of_day))
-                )
-            except ValueError:
-                pass  # Ignore invalid dates
-
-        return queryset
+        return OrderFilterService.filter_by_date(
+            queryset,
+            self.request.query_params.get("start_date"),
+            self.request.query_params.get("end_date")
+        )
 
 
 class EditOrderView(RetrieveUpdateAPIView):
@@ -142,9 +92,7 @@ class ExportOrdersView(View):
 
     def get(self, request):
 
-        qs = OrdersModel.objects.select_related("group").all()
-
-        qs = get_filtered_orders(request, qs)
+        qs = get_filtered_orders(request, OrdersModel.objects.select_related("group").all())
 
         buffer = export_excel(qs)
 
@@ -185,19 +133,7 @@ class CommentView(GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        CommentModel.objects.create(
-            order=order,
-            text=serializer.validated_data["text"],
-            sender_name=request.user.name + ' ' + request.user.surname
-        )
-
-        if not order.manager:
-            order.manager = request.user.name
-
-        if order.status in (None, "New"):
-            order.status = "In Work"
-
-        order.save()
+        SendCommentService.send_comment(order, request.user, serializer.validated_data["text"])
 
         return Response(
             {"detail": "Comment added successfully"},
@@ -209,36 +145,5 @@ class OrderStatusCountView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        qs = OrdersModel.objects.all()
 
-        # Replace null/empty/"new" with "New"
-        qs = qs.annotate(
-            status_grouped=Case(
-                When(Q(status__isnull=True) | Q(status__iexact="new") | Q(status=""), then=Value("New")),
-                default=F("status"),
-                output_field=CharField()
-            )
-        )
-
-        # Overall counts
-        by_status = qs.values("status_grouped").annotate(total=Count("id"))
-
-        # Per-manager counts
-        raw = qs.values("manager", "status_grouped").annotate(total=Count("id"))
-        by_manager_dict = defaultdict(list)
-        for item in raw:
-            by_manager_dict[item["manager"]].append({
-                "status": item["status_grouped"],
-                "total": item["total"]
-            })
-
-        by_manager = [
-            {"manager": manager, "total": sum(s["total"] for s in statuses), "by_status": statuses}
-            for manager, statuses in by_manager_dict.items()
-        ]
-
-        return Response({
-            "total": qs.count(),
-            "by_status": list(by_status),
-            "by_manager": by_manager
-        })
+        return Response(OrderStatusCountService.get_order_status_count())

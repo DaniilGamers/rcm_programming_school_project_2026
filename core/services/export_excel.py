@@ -2,8 +2,6 @@ import xlwt
 
 from io import BytesIO
 
-from django.http import FileResponse
-
 
 def export_excel(qs):
     if not qs:

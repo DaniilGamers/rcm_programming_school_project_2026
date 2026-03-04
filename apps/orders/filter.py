@@ -45,6 +45,7 @@ class OrderFilter(filters.FilterSet):
         fields=(
             ('id', 'id'),
             ('name', 'name'),
+            ('surname', 'surname'),
             ('email', 'email'),
             ('phone', 'phone'),
             ('age', 'age'),
