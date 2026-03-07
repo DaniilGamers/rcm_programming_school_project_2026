@@ -11,20 +11,42 @@
       "item": [
         {
           "name": "list_managers",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Staff retrieved successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwOTI4OTI4LCJpYXQiOjE3NzA5Mjg2MjgsImp0aSI6ImE0YzA0YjE3M2M0MTQ1ZjU4OTc0YTJhYzAxZTM4M2M5IiwidXNlcl9pZCI6IjEifQ.PLGVsGNfX-cEUWqfKR2aKivkrFPB1sw489ByEpxAEs4",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
             "header": [],
             "body": {
@@ -56,17 +78,39 @@
         },
         {
           "name": "create_manager",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMTU1MDg3LCJpYXQiOjE3NzAxNTQ3ODcsImp0aSI6IjBiOTRkMTY4M2U2ZjRjZDI5ZWNjY2ViNzliODgzMDgwIiwidXNlcl9pZCI6IjEifQ.luyBWUgS480ozEzHfULqxfjhzpHkIiW22CyklWoV6TE",
-                  "type": "string"
-                }
-              ]
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Created staff successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
             "method": "POST",
             "header": [],
             "body": {
@@ -79,12 +123,13 @@
               }
             },
             "url": {
-              "raw": "{{host}}/users",
+              "raw": "{{host}}/users/create",
               "host": [
                 "{{host}}"
               ],
               "path": [
-                "users"
+                "users",
+                "create"
               ]
             }
           },
@@ -92,17 +137,39 @@
         },
         {
           "name": "block_manager",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMTUyMDk3LCJpYXQiOjE3NzAxNTE3OTgsImp0aSI6IjZmYzkzOTUzMjY4MzRjNDY4YTExZTlkMTJjNDg2YmFlIiwidXNlcl9pZCI6IjEifQ.DAAOxqFtLq44knTsJ-np4Y7F1ghsTlOJCMyoVBgz8a8",
-                  "type": "string"
-                }
-              ]
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Blocked staff successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
             "method": "PATCH",
             "header": [],
             "body": {
@@ -138,17 +205,39 @@
         },
         {
           "name": "unblock_manager",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5MjgxNzMyLCJpYXQiOjE3NjkyNzk5MzIsImp0aSI6IjA1N2ZjOGUxOWJjZTRiMTJhYmFiZmY5MTc4Nzk2ODE5IiwidXNlcl9pZCI6IjEifQ.tsBVZeeCLvgJVMZH3qj9LCu7ZrgCBsl4yoojI8Dw028",
-                  "type": "string"
-                }
-              ]
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Unblocked staff successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
             "method": "PATCH",
             "header": [],
             "body": {
@@ -184,22 +273,44 @@
         },
         {
           "name": "update-password",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "",
-                  "type": "string"
-                }
-              ]
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Updated password successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"password\": \"password_here\",\r\n    \"password_confirm\": \"same_password\"\r\n}",
+              "raw": "{\r\n    \"password\": \"Test1234\",\r\n    \"password_confirm\": \"Test1234\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -207,14 +318,14 @@
               }
             },
             "url": {
-              "raw": "{{host}}/users/update_password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMTUzMjM1LCJpYXQiOjE3NzAxNTI5MzUsImp0aSI6IjM1ZGZhMDZkZTQwZDQ5MWVhMDE0YWU4NGMyMjIwMGI4IiwidXNlcl9pZCI6IjEifQ.tW5SloAAPcS8o744UXqztm1JgHc0oepOm9Gy3wTbEuc",
+              "raw": "{{host}}/users/update_password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWN0aXZhdGlvbiIsInVzZXJfaWQiOjIsImlhdCI6MTc3MjgxODg3MiwiZXhwIjoxNzcyODIwNjcyfQ.hqh1CTmIpqxX97U4AJp_rYZsH930oPevLvtbXsFh21c",
               "host": [
                 "{{host}}"
               ],
               "path": [
                 "users",
                 "update_password",
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMTUzMjM1LCJpYXQiOjE3NzAxNTI5MzUsImp0aSI6IjM1ZGZhMDZkZTQwZDQ5MWVhMDE0YWU4NGMyMjIwMGI4IiwidXNlcl9pZCI6IjEifQ.tW5SloAAPcS8o744UXqztm1JgHc0oepOm9Gy3wTbEuc"
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWN0aXZhdGlvbiIsInVzZXJfaWQiOjIsImlhdCI6MTc3MjgxODg3MiwiZXhwIjoxNzcyODIwNjcyfQ.hqh1CTmIpqxX97U4AJp_rYZsH930oPevLvtbXsFh21c"
               ]
             }
           },
@@ -222,17 +333,39 @@
         },
         {
           "name": "send_activate_link",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMTU1MDg3LCJpYXQiOjE3NzAxNTQ3ODcsImp0aSI6IjBiOTRkMTY4M2U2ZjRjZDI5ZWNjY2ViNzliODgzMDgwIiwidXNlcl9pZCI6IjEifQ.luyBWUgS480ozEzHfULqxfjhzpHkIiW22CyklWoV6TE",
-                  "type": "string"
-                }
-              ]
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Send activate token successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
             "method": "POST",
             "header": [],
             "body": {
@@ -260,20 +393,42 @@
         },
         {
           "name": "get_user",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Current user retrieved successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwMTUyMjgzLCJpYXQiOjE3NzAxNTE5ODMsImp0aSI6IjU1YjVkNjRmYjIzZDQ4ZmU5OGQxNzJkZDVmYmY4ZTQ5IiwidXNlcl9pZCI6IjEifQ.HI-bM2b4WBQhArUg8SCwUgegaOhmeBJIUwRCplseh-0",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
             "header": [],
             "body": {
@@ -305,6 +460,37 @@
       "item": [
         {
           "name": "access",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login successful\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "let jsonData = pm.response.json();\r",
+                  "\r",
+                  "if (jsonData.access) {\r",
+                  "    pm.environment.set(\"access_token\", jsonData.access);\r",
+                  "}\r",
+                  "if (jsonData.refresh) {\r",
+                  "    pm.environment.set(\"refresh_token\", jsonData.refresh);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "packages": {},
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [],
@@ -332,12 +518,48 @@
         },
         {
           "name": "refresh",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Refresh successful\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "let jsonData = pm.response.json();\r",
+                  "\r",
+                  "if (jsonData.access) {\r",
+                  "    pm.environment.set(\"access_token\", jsonData.access);\r",
+                  "}\r",
+                  "\r",
+                  "if (jsonData.refresh) {\r",
+                  "    pm.environment.set(\"refresh_token\", jsonData.refresh);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3MTk1NzQ3OCwiaWF0IjoxNzcxODcxMDc4LCJqdGkiOiI5ZDA5Y2QyMDcwZTk0ZDRlYmM2NTFlMjEyMmNkODU2YSIsInVzZXJfaWQiOiIxIn0.z__7wd2HAZFTG1JIZ0uvMtKsU5m3x2RJCi9ntOdbD7U\"\r\n}",
+              "raw": "{\r\n    \"refresh\": \"{{refresh_token}}\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -364,21 +586,58 @@
       "item": [
         {
           "name": "list_orders",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcxODc5MjA1LCJpYXQiOjE3NzE4Nzg5MDUsImp0aSI6IjY1MTBkYjEyY2QxODRiNjQ5Y2EzMjVmMmVmMTliYTFhIiwidXNlcl9pZCI6IjEifQ.yiSq6z4lxGfgfEYBtMWVwxZ9_eLgxvOR3GQK6DpT5ks",
-                  "type": "string"
-                }
-              ]
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Orders retrieved successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check total orders exist\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    pm.expect(data.results).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Check first order has required fields\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    if (data.results.length > 0) {\r",
+                  "        let order = data.results[0];\r",
+                  "        pm.expect(order).to.have.property(\"id\");\r",
+                  "        pm.expect(order).to.have.property(\"name\");\r",
+                  "        pm.expect(order).to.have.property(\"status\");\r",
+                  "    }\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{host}}/orders?start_date=02/01/2022&end_date=02/05/2022",
+              "raw": "{{host}}/orders?start_date=02/05/2022&end_date=02/05/2022",
               "host": [
                 "{{host}}"
               ],
@@ -388,7 +647,7 @@
               "query": [
                 {
                   "key": "start_date",
-                  "value": "02/01/2022"
+                  "value": "02/05/2022"
                 },
                 {
                   "key": "end_date",
@@ -401,17 +660,26 @@
         },
         {
           "name": "create_group",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5ODAyODY3LCJpYXQiOjE3Njk4MDEwNjcsImp0aSI6IjkyYjg3YjE2N2MzYTQ5Yzg4N2FmNmRmYWUxMTBiZDY0IiwidXNlcl9pZCI6IjEifQ.K0o2j3oHD0cAUBBQBzNYaySVfC6SqygFIfQxXJAElPo",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "POST",
             "header": [],
             "body": {
@@ -424,13 +692,13 @@
               }
             },
             "url": {
-              "raw": "{{host}}/orders/groups",
+              "raw": "{{host}}/orders/groups_post",
               "host": [
                 "{{host}}"
               ],
               "path": [
                 "orders",
-                "groups"
+                "groups_post"
               ]
             }
           },
@@ -438,17 +706,39 @@
         },
         {
           "name": "update_order",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwOTI1MDg3LCJpYXQiOjE3NzA5MjQ3ODcsImp0aSI6IjU3YTZlN2M4OGY2MzQzMTU5NmIxYTlmYzI3Y2I5ZDU0IiwidXNlcl9pZCI6IjEifQ.UFSrn989K5HJ2FrfMlTV48GpOe2eWNUZppxmOefiTeI",
-                  "type": "string"
-                }
-              ]
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Order patch success\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
             "method": "PATCH",
             "header": [],
             "body": {
@@ -475,20 +765,42 @@
         },
         {
           "name": "excel_export",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Order list export success\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY5ODY1Nzc4LCJpYXQiOjE3Njk4NjM5NzgsImp0aSI6Ijg3NjZmZDQ1ZWMzNDQxZWNiNWM3OTRmMGI0YWUxNDA4IiwidXNlcl9pZCI6IjEifQ.XmGmP5Yc6o44qZEjg1EE7Y-gB8E9wJABHWGlxtZDE5A",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
             "header": [],
             "body": {
@@ -510,27 +822,49 @@
         },
         {
           "name": "list_groups",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcxODY3MTI0LCJpYXQiOjE3NzE4NjY4MjQsImp0aSI6ImU1ZTkzMTYzMDE3MDQwNjdiN2UwMjI0NjA3NTg2Y2Q4IiwidXNlcl9pZCI6IjEifQ.IXZ8yPmG1tqpiWHMQDgPfDCKGlWvNExmK0DCcsUwuOw",
-                  "type": "string"
-                }
-              ]
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Groups retrieved successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{host}}/orders/groups",
+              "raw": "{{host}}/orders/groups_get",
               "host": [
                 "{{host}}"
               ],
               "path": [
                 "orders",
-                "groups"
+                "groups_get"
               ]
             }
           },
@@ -538,6 +872,38 @@
         },
         {
           "name": "post_comment",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Comment send success\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -576,17 +942,39 @@
         },
         {
           "name": "list_comments",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcwOTMzMTczLCJpYXQiOjE3NzA5MzI4NzMsImp0aSI6ImRhZmRlZTFmNzk3MTRiMmVhMWNkNTkzYjI5MTdiMjRiIiwidXNlcl9pZCI6IjEifQ.QZ4kW0Oasdt2eq6nyYbbrdkj32XJjpj2tDow9ka_yas",
-                  "type": "string"
-                }
-              ]
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Comments retrieved successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
             "method": "GET",
             "header": [],
             "url": {
@@ -605,17 +993,54 @@
         },
         {
           "name": "count_status_order",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcxODk2NDQwLCJpYXQiOjE3NzE4OTYxNDAsImp0aSI6ImI2Y2Q2NGMxNmZjZDQyMjY5NTRlZmRlZTgyYjQ2ZTRlIiwidXNlcl9pZCI6IjEifQ.nUXJn7BhoxmnVYt2fBl8lFg_rfpM6L_Ck_bbcsu0nw8",
-                  "type": "string"
-                }
-              ]
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "let token = pm.environment.get(\"access_token\");\r",
+                  "if (token) {\r",
+                  "    pm.request.headers.add({\r",
+                  "        key: \"Authorization\",\r",
+                  "        value: \"Bearer \" + token\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
             },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status count retrieved successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Total orders is a number\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    pm.expect(data.total).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"by_status is an array\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    pm.expect(data.by_status).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"by_manager is an array\", function () {\r",
+                  "    let data = pm.response.json();\r",
+                  "    pm.expect(data.by_manager).to.be.an(\"array\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
             "method": "GET",
             "header": [],
             "url": {
