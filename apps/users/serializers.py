@@ -6,7 +6,10 @@ UserModel = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    last_login_display = serializers.SerializerMethodField()
+    last_login_display = serializers.DateTimeField(
+        source='last_login',
+        read_only=True,
+        format='%B %d, %Y')
 
     class Meta:
 
@@ -22,25 +25,28 @@ class UserSerializer(serializers.ModelSerializer):
 
         )
 
-    read_only_fields = ('id', 'email', 'is_active', 'is_superuser')
-
-    def get_last_login_display(self, obj):
-        if obj.last_login:
-            return obj.last_login.strftime("%B %d, %Y")
-        else:
-            return None
+    read_only_fields = ('id', 'email', 'is_active', 'is_superuser', 'last_login_display')
 
 
 class SetPasswordSerializer(serializers.Serializer):
-    password = serializers.CharField(
-        write_only=True,
-        min_length=8
-    )
-    password_confirm = serializers.CharField(
-        write_only=True
-    )
+    password = serializers.CharField(write_only=True)
+    password_confirm = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['password_confirm']:
-            raise serializers.ValidationError("Passwords do not match")
+        password = attrs.get("password")
+        password_confirm = attrs.get("password_confirm")
+
+        if password != password_confirm:
+            raise serializers.ValidationError({
+                "password_confirm": "Passwords do not match"
+            })
         return attrs
+
+    def save(self):
+        user = self.context["user"]
+
+        user.set_password(self.validated_data["password"])
+        user.is_active = True
+        user.save()
+
+        return user

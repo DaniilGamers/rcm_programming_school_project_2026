@@ -47,25 +47,25 @@ def export_excel(qs):
             return "null"
         return str(value)
 
-    for row_num, o in enumerate(qs, start=1):
+    for row_num, order in enumerate(qs, start=1):
         row = [
-            excel_nullable(o.id),
-            excel_nullable(o.name),
-            excel_nullable(o.surname),
-            excel_nullable(o.email),
-            excel_nullable(o.phone),
-            excel_nullable(o.age),
-            excel_nullable(o.course),
-            excel_nullable(o.course_format),
-            excel_nullable(o.course_type),
-            excel_nullable(o.sum),
-            excel_nullable(o.alreadyPaid),
-            excel_nullable(o.created_at.strftime("%d-%m-%Y") if o.created_at else None),
-            excel_nullable(o.group.name if o.group else None),
-            excel_nullable(o.utm),
-            excel_nullable(o.msg),
-            excel_nullable(o.status),
-            excel_nullable(o.manager),
+            excel_nullable(order.id),
+            excel_nullable(order.name),
+            excel_nullable(order.surname),
+            excel_nullable(order.email),
+            excel_nullable(order.phone),
+            excel_nullable(order.age),
+            excel_nullable(order.course),
+            excel_nullable(order.course_format),
+            excel_nullable(order.course_type),
+            excel_nullable(order.sum),
+            excel_nullable(order.alreadyPaid),
+            excel_nullable(order.created_at.strftime("%d-%m-%Y") if order.created_at else None),
+            excel_nullable(order.group.name if order.group else None),
+            excel_nullable(order.utm),
+            excel_nullable(order.msg),
+            excel_nullable(order.status),
+            excel_nullable(order.manager),
         ]
         style = body_style
 

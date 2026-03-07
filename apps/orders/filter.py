@@ -1,7 +1,6 @@
 from django_filters import rest_framework as filters
 from apps.orders.models import OrdersModel
-from datetime import datetime
-from django.db.models import Q
+from core.services.order_filter_service import OrderFilterService
 
 
 class OrderFilter(filters.FilterSet):
@@ -10,34 +9,19 @@ class OrderFilter(filters.FilterSet):
     email = filters.CharFilter('email', 'icontains')
     phone = filters.NumberFilter('phone', 'icontains')
     age = filters.NumberFilter('age', 'icontains')
-    course = filters.BaseInFilter('course')
-    course_format = filters.BaseInFilter('course_format')
-    course_type = filters.BaseInFilter('course_type')
-    status = filters.BaseInFilter('status')
+    course = filters.BaseInFilter('course', lookup_expr='in')
+    course_format = filters.BaseInFilter('course_format', lookup_expr='in')
+    course_type = filters.BaseInFilter('course_type', lookup_expr='in')
+    status = filters.BaseInFilter('status', lookup_expr='in')
     group = filters.CharFilter(field_name='group__name', lookup_expr='iexact')
 
-    start_date = filters.DateFilter(method='filter_by_same_day')
-    end_date = filters.DateFilter(method='filter_by_same_day')
+    start_date = filters.DateFilter(method='filter_by_date_range')
+    end_date = filters.DateFilter(method='filter_by_date_range')
 
-    def filter_by_same_day(self, queryset, name, value):
+    def filter_by_date_range(self, queryset, name, value):
         start = self.data.get('start_date')
         end = self.data.get('end_date')
-
-        if not start and not end:
-            return queryset
-
-        start_date = datetime.strptime(start, "%m/%d/%Y").date() if start else None
-        end_date = datetime.strptime(end, "%m/%d/%Y").date() if end else None
-
-        if start_date and end_date:
-            # full range between start and end
-            return queryset.filter(created_at__date__range=(start_date, end_date))
-        elif start_date:
-            return queryset.filter(created_at__date=start_date)
-        elif end_date:
-            return queryset.filter(created_at__date=end_date)
-
-        return queryset
+        return OrderFilterService.filter_by_date(queryset, start, end)
 
     manager = filters.BaseInFilter('manager')
 
@@ -55,9 +39,7 @@ class OrderFilter(filters.FilterSet):
             ('sum', 'sum'),
             ('alreadyPaid', 'alreadyPaid'),
             ('created_at', 'created_at'),
-            ('utm', 'utm'),
-            ('msg', 'msg'),
-            ('group', 'group'),
+            ('group__name', 'group'),
             ('status', 'status'),
             ('manager', 'manager')
 
@@ -66,4 +48,8 @@ class OrderFilter(filters.FilterSet):
 
     class Meta:
         model = OrdersModel
-        fields = []
+        fields = [
+            "name", "surname", "email", "phone", "age",
+            "course", "course_format", "course_type", "status",
+            "group", "manager"
+        ]

@@ -14,7 +14,7 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
         db_table = 'staff_and_admin'
         ordering = ['-id']
 
-    email = models.EmailField(unique=True, validators=[V.validate_email], blank=False)
+    email = models.EmailField(unique=True, blank=False)
     name = models.CharField(max_length=20, validators=(V.MinLengthValidator(1),), blank=False)
     surname = models.CharField(max_length=20, validators=(V.MinLengthValidator(1),), blank=False)
     is_staff = models.BooleanField(default=True)

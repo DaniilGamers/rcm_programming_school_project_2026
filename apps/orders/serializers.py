@@ -20,7 +20,27 @@ class OrdersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrdersModel
-        fields = ('id', 'name', 'surname',  'email', 'phone', 'age', 'course', 'course_format', 'course_format', 'course_type', 'sum', 'alreadyPaid', 'group', 'created_at', 'created_date', 'utm', 'msg', 'status', 'manager', 'group_id', 'comments_count')
+        fields = ('id',
+                  'name',
+                  'surname',
+                  'email',
+                  'phone',
+                  'age',
+                  'course',
+                  'course_format',
+                  'course_format',
+                  'course_type',
+                  'sum',
+                  'alreadyPaid',
+                  'group',
+                  'created_at',
+                  'created_date',
+                  'utm',
+                  'msg',
+                  'status',
+                  'manager',
+                  'group_id',
+                  'comments_count')
         read_only_fields = ('id', 'comments_count')
 
     def get_created_date(self, obj):
@@ -34,6 +54,12 @@ class OrdersSerializer(serializers.ModelSerializer):
             if isinstance(model_field, (models.CharField, models.TextField)) and value == "":
                 attrs[field_name] = "null"
         return attrs
+
+
+class OrderStatusCountSerializer(serializers.Serializer):
+    total = serializers.IntegerField()
+    by_status = serializers.ListField(child=serializers.DictField())
+    by_manager = serializers.ListField(child=serializers.DictField())
 
 
 class GroupSerializer(serializers.ModelSerializer):

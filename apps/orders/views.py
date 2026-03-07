@@ -1,16 +1,16 @@
-from apps.orders.serializers import OrdersSerializer, GroupSerializer, CommentSerializer
+from apps.orders.serializers import OrdersSerializer, GroupSerializer, CommentSerializer, OrderStatusCountSerializer
 
 from rest_framework.permissions import IsAuthenticated
 
 from core.permissions.is_admin_or_manager import IsAdminOrManager
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.orders.filter import OrderFilter
 
 from django.db.models import Count
 
 from apps.orders.models import OrdersModel, GroupModel, CommentModel
-
-from django.views import View
 
 from datetime import datetime
 
@@ -44,18 +44,13 @@ order = OrdersModel()
 class OrdersListView(ListAPIView):
     serializer_class = OrdersSerializer
     pagination_class = CustomPagination
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]
     queryset = OrdersModel.objects.all()
+    filter_backends = [DjangoFilterBackend]
     filterset_class = OrderFilter
 
     def get_queryset(self):
-        queryset = OrdersModel.objects.annotate(comments_count=Count('messages')).order_by('-id')
-
-        return OrderFilterService.filter_by_date(
-            queryset,
-            self.request.query_params.get("start_date"),
-            self.request.query_params.get("end_date")
-        )
+        return OrdersModel.objects.annotate(comments_count=Count('messages')).order_by('-id')
 
 
 class EditOrderView(RetrieveUpdateAPIView):
@@ -88,11 +83,14 @@ class GroupView(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class ExportOrdersView(View):
+class ExportOrdersView(GenericAPIView):
+    queryset = OrdersModel.objects.select_related("group").all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = OrderFilter
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
 
-        qs = get_filtered_orders(request, OrdersModel.objects.select_related("group").all())
+        qs = self.filter_queryset(self.get_queryset())
 
         buffer = export_excel(qs)
 
@@ -143,7 +141,10 @@ class CommentView(GenericAPIView):
 
 class OrderStatusCountView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
+    serializer_class = OrderStatusCountSerializer
 
     def get(self, request):
-
-        return Response(OrderStatusCountService.get_order_status_count())
+        data = OrderStatusCountService.get_order_status_count()
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data)

@@ -9,7 +9,7 @@ from rest_framework.response import Response
 UserModel = get_user_model()
 
 
-def token_expireDate_check(request, token):
+def token_expireDate_check(token):
 
     try:
         payload = jwt.decode(
@@ -25,10 +25,10 @@ def token_expireDate_check(request, token):
     if payload.get("token_type") != "activation":
         return Response({"detail": "Wrong token type"}, status=400)
 
-    user = UserModel.objects.get(id=payload["user_id"])
+    try:
+        user = UserModel.objects.get(id=payload["user_id"])
+    except UserModel.DoesNotExist:
+        return Response({"detail": "User not found"}, status=404)
 
-    user.set_password(request.data["password"])
-    user.is_active = True
-    user.save()
+    return user
 
-    return None

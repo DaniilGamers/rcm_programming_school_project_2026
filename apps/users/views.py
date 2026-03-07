@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from core.permissions.is_superAdmin import IsSuperAdmin
 
-from apps.users.serializers import UserSerializer
+from apps.users.serializers import UserSerializer, SetPasswordSerializer
 
 from core.services.activate_link_generator import generate_activation_token
 
@@ -111,11 +111,22 @@ class SetPasswordView(GenericAPIView):
     authentication_classes = []
     permission_classes = (AllowAny,)
 
-    def post(self, request, token):
-        response = token_expireDate_check(request, token)
+    def post(self, request, *args, **kwargs):
 
-        if isinstance(response, Response):
-            return response
+        token = self.kwargs["token"]
+
+        user = token_expireDate_check(token)
+
+        if isinstance(user, Response):
+            return user
+
+        serializer = SetPasswordSerializer(
+            data=request.data,
+            context={"user": user}
+        )
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
         return Response(
             {"detail": "Password set successfully"},

@@ -38,8 +38,8 @@ class OrderQuerySet(models.QuerySet):
     def by_end_date(self, end_date):
         return self.filter(end_date=end_date)
 
-    def by_date_range(self, start_date, end_date):
-        return self.filter(date_range=(start_date, end_date))
+    # def by_date_range(self, start_date, end_date):
+    #     return self.filter(date_range=(start_date, end_date))
 
     def by_manager(self, manager):
         return self.filter(manager=manager)
@@ -85,8 +85,8 @@ class OrderManager(models.Manager):
     def by_end_date(self, end_date):
         return self.get_queryset().by_end_date(end_date)
 
-    def by_date_range(self, start_date, end_date):
-        return self.get_queryset().self.date_range(start_date, end_date)
+    # def by_date_range(self, start_date, end_date):
+    #     return self.get_queryset().self.date_range(start_date, end_date)
 
     def by_manager(self, manager):
         return self.get_queryset().by_manager(manager)
