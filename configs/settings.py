@@ -2,13 +2,22 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+from .extra_conf.jwt_conf import *
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
+DEBUG = os.getenv("DEBUG") == 'True'
+
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1"
+]
+AUTH_USER_MODEL = 'users.UserModel'
 
 # Common Django settings
 
@@ -19,6 +28,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'django_celery_beat',
+    'django_celery_results',
 
     #my_apps
     'apps.users',
@@ -59,6 +70,9 @@ TEMPLATES = [
     },
 ]
 
+WSGI_APPLICATION = 'configs.wsgi.application'
+ASGI_APPLICATION = 'configs.asgi.application'
+
 # Database
 
 DATABASES = {
@@ -71,10 +85,6 @@ DATABASES = {
         'PORT': os.getenv("MYSQL_PORT")
     }
 }
-
-WSGI_APPLICATION = 'configs.wsgi.application'
-
-AUTH_USER_MODEL = 'users.UserModel'
 
 # Password validation
 
@@ -129,5 +139,3 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ]
 }
-
-from ..extra_conf.jwt_conf import *
