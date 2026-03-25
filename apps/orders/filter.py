@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django_filters import rest_framework as filters
 from apps.orders.models import OrdersModel
 from core.services.order_filter_service import OrderFilterService
@@ -12,7 +13,13 @@ class OrderFilter(filters.FilterSet):
     course = filters.BaseInFilter('course', lookup_expr='in')
     course_format = filters.BaseInFilter('course_format', lookup_expr='in')
     course_type = filters.BaseInFilter('course_type', lookup_expr='in')
-    status = filters.BaseInFilter('status', lookup_expr='in')
+    status = filters.CharFilter(method="filter_status")
+
+    def filter_status(self, queryset, name, value):
+        if value == "New":
+            return queryset.filter(Q(status="New") | Q(status__isnull=True))
+        return queryset.filter(status=value)
+
     group = filters.CharFilter(field_name='group__name', lookup_expr='iexact')
 
     start_date = filters.DateFilter(method='filter_by_date_range')

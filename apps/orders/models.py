@@ -20,12 +20,12 @@ class OrdersModel(BaseModel):
         db_table = 'orders'
         ordering = ('-id',)
 
-    name = models.CharField(max_length=25, null=True, validators=(V.MinLengthValidator(1),))
-    surname = models.CharField(max_length=25, null=True, validators=(V.MinLengthValidator(1),))
-    email = models.CharField(max_length=100, null=True, validators=[V.validate_email],)
-    phone = models.CharField(max_length=12, null=True, validators=(V.MinLengthValidator(3),))
+    name = models.CharField(max_length=25, null=True, blank=True, validators=(V.MinLengthValidator(1),))
+    surname = models.CharField(max_length=25, null=True,  blank=True, validators=(V.MinLengthValidator(1),))
+    email = models.CharField(max_length=100, null=True, blank=True, validators=[V.validate_email],)
+    phone = models.CharField(max_length=12, null=True, blank=True, validators=(V.MinLengthValidator(0),))
     age = models.IntegerField(validators=(V.MinValueValidator(1),))
-    course = models.CharField(max_length=10, null=True)
+    course = models.CharField(max_length=10, blank=True, null=True)
     course_format = models.CharField(max_length=15, null=True)
     course_type = models.CharField(max_length=100, null=True)
     sum = models.IntegerField(null=True, validators=(V.MinValueValidator(0),))
